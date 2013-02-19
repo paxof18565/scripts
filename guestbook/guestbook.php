@@ -13,113 +13,113 @@ session_start();
 
 /* Some config */
 define('CONF_GB_PASSWORD'   , 'secretpassword'); // Password to delete a comment
-define('CONF_GB_CMTSPP'     ,  10);	 	 // Number of comments shown per page
-define('CONF_GB_DB_SERVER'  , 'localhost');	 // MySQL server
-define('CONF_GB_DB_USER'    , 'root');		 // MySQL user
-define('CONF_GB_DB_PASSWORD', '');		 // MySQL user's password
-define('CONF_GB_DB_DATABASE', 'guestbook');	 // MySQL database
-define('CONF_GB_DB_TABLE'   , 'guestbook');	 // MySQL table
+define('CONF_GB_CMTSPP'     ,  10);              // Number of comments shown per page
+define('CONF_GB_DB_SERVER'  , 'localhost');      // MySQL server
+define('CONF_GB_DB_USER'    , 'root');           // MySQL user
+define('CONF_GB_DB_PASSWORD', '');               // MySQL user's password
+define('CONF_GB_DB_DATABASE', 'guestbook');      // MySQL database
+define('CONF_GB_DB_TABLE'   , 'guestbook');      // MySQL table
 
 /* Database connection */
-$mysqli = new mysqli(CONF_GB_DB_SERVER, 
-		     CONF_GB_DB_USER, 
-		     CONF_GB_DB_PASSWORD, 
+$mysqli = new mysqli(CONF_GB_DB_SERVER,
+		     CONF_GB_DB_USER,
+		     CONF_GB_DB_PASSWORD,
 		     CONF_GB_DB_DATABASE
 );
 
 if ($mysqli->connect_errno) {
-    exit('Failed to connect to MySQL: (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
+	exit('Failed to connect to MySQL: (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
 }
 
 /* Some functions */
 function tokenGenerate()
 {
-    $_SESSION['token'] = md5(microtime().rand(0,1000000));
-    $_SESSION['token_name'] = substr(md5(microtime().rand(0,1000000)),0,8);
+	$_SESSION['token'] = md5(microtime().rand(0,1000000));
+	$_SESSION['token_name'] = substr(md5(microtime().rand(0,1000000)),0,8);
 }
 
 function tokenVerify()
 {
-    $name = $_SESSION['token_name'];
-    if (isset($_POST[$name]) AND $_POST[$name] == $_SESSION['token']) {
-	tokenGenerate(); 
-	return TRUE;
-    } else {
-	tokenGenerate(); 
-	return FALSE;
-    }
+	$name = $_SESSION['token_name'];
+	if (isset($_POST[$name]) AND $_POST[$name] == $_SESSION['token']) {
+		tokenGenerate();
+		return TRUE;
+	} else {
+		tokenGenerate();
+		return FALSE;
+	}
 }
 
 function generateNums()
 {
-    $_SESSION['num1'] = rand(0,30);
-    $_SESSION['num2'] = rand(5,50);
+	$_SESSION['num1'] = rand(0,30);
+	$_SESSION['num2'] = rand(5,50);
 }
 
-/* We need some stuff to be present, so if not, let's generate it! */
+/* We need some stuff to be present, so if it's not here, we generate it! */
 if (!isset($_SESSION['token_name']) OR !isset($_SESSION['token'])) {
-    tokenGenerate();
+	tokenGenerate();
 }
 
 if (!isset($_SESSION['num1']) OR !isset($_SESSION['num2'])) {
-    generateNums();
+	generateNums();
 }
 
 $msg = '';
 
 /* Wanna delete a comment? */
-if (isset($_POST['password']) 
-    AND $_POST['password']==CONF_GB_PASSWORD 
-    AND isset($_POST['id']) 
-    AND tokenVerify()
+if (isset($_POST['password'])
+	AND $_POST['password']==CONF_GB_PASSWORD
+	AND isset($_POST['id'])
+	AND tokenVerify()
 ) {
-    if ($mysqli->query("DELETE FROM `".CONF_GB_DB_TABLE."` WHERE `id`='".(integer)$_POST['id']."'")) {
-	$msg = '<p class="green">Comment with ID \''.(integer)$_POST['id'].'\' has been deleted successfully.</p>';
-    } else {
-	$msg = '<p class="red">An error has occured while deleting comment with ID \''.(integer)$_POST['id'].'\'.</p>';
-    }
+	if ($mysqli->query("DELETE FROM `".CONF_GB_DB_TABLE."` WHERE `id`='".(integer)$_POST['id']."'")) {
+		$msg = '<p class="green">Comment with ID \''.(integer)$_POST['id'].'\' has been deleted successfully.</p>';
+	} else {
+		$msg = '<p class="red">An error has occured while deleting comment with ID \''.(integer)$_POST['id'].'\'.</p>';
+	}
 }
 
 /* Wanna post a comment? */
 if (!empty($_POST['content']) AND tokenVerify()) {
-    if ($_POST['num'] != ($_SESSION['num1'] + $_SESSION['num2'])) {
-	generateNums();
-	$msg = '<p class="red">You have not entered or entered wrong the key!</p>';
-    } else {
-	generateNums();
-
-        $ip = $_SERVER["REMOTE_ADDR"];
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip .= '|'.$_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-        if (isset($_SERVER['HTTP_FORWARDED'])) {
-            $ip .= '|'.$_SERVER['HTTP_FORWARDED'];
-        }
-        if (isset($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip .= '|'.$_SERVER['HTTP_CLIENT_IP'];
-        }
-        if (isset($_SERVER['X_HTTP_FORWARDED_FOR'])) {
-            $ip .= '|'.$_SERVER['X_HTTP_FORWARDED_FOR'];
-        }
-        if (isset($_SERVER['X_FORWARDED_FOR'])) {
-            $ip .= '|'.$_SERVER['X_FORWARDED_FOR'];
-        }
-        $ip .= "/".gethostbyaddr($_SERVER["REMOTE_ADDR"]);
-
-	$pContent = substr($_POST['content'],0,2000);
-	$pName    = substr($_POST['name']   ,0,30);
-	$pEmail   = substr($_POST['e-mail'] ,0,100);
-	$pIP	  = $ip;
-
-	$stmt = $mysqli->prepare("INSERT INTO `".CONF_GB_DB_TABLE."` (`id`,`timestamp`,`content`,`name`,`e-mail`,`ip`) VALUES (NULL,".time().",?,?,?,?)");
-	$stmt->bind_param('ssss', $pContent, $pName, $pEmail, $pIP);
-	if ($stmt->execute()) {
-	    $msg = '<p class="green">Comment has been added successfully.</p>';
+	if ($_POST['num'] != ($_SESSION['num1'] + $_SESSION['num2'])) {
+		generateNums();
+		$msg = '<p class="red">The key you entered is not valid!!</p>';
 	} else {
-	    $msg = '<p class="red">An error has occured while adding your comment.</p>';
+		generateNums();
+
+		$ip = $_SERVER["REMOTE_ADDR"];
+		if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+			$ip .= '|'.$_SERVER['HTTP_X_FORWARDED_FOR'];
+		}
+		if (isset($_SERVER['HTTP_FORWARDED'])) {
+			$ip .= '|'.$_SERVER['HTTP_FORWARDED'];
+		}
+		if (isset($_SERVER['HTTP_CLIENT_IP'])) {
+			$ip .= '|'.$_SERVER['HTTP_CLIENT_IP'];
+		}
+		if (isset($_SERVER['X_HTTP_FORWARDED_FOR'])) {
+			$ip .= '|'.$_SERVER['X_HTTP_FORWARDED_FOR'];
+		}
+		if (isset($_SERVER['X_FORWARDED_FOR'])) {
+			$ip .= '|'.$_SERVER['X_FORWARDED_FOR'];
+		}
+		$ip .= "/".gethostbyaddr($_SERVER["REMOTE_ADDR"]);
+
+		$pContent = substr($_POST['content'],0,2000);
+		$pName    = substr($_POST['name']   ,0,30);
+		$pEmail   = substr($_POST['e-mail'] ,0,100);
+		$pIP	  = $ip;
+
+		$stmt = $mysqli->prepare("INSERT INTO `".CONF_GB_DB_TABLE."` (`id`,`timestamp`,`content`,`name`,`e-mail`,`ip`) VALUES (NULL,".time().",?,?,?,?)");
+		$stmt->bind_param('ssss', $pContent, $pName, $pEmail, $pIP);
+		if ($stmt->execute()) {
+			$msg = '<p class="green">Comment has been added successfully.</p>';
+		} else {
+			$msg = '<p class="red">An error has occured while adding your comment.</p>';
+		}
+		$stmt->close();
 	}
-	$stmt->close();
-    }
 }
 
 ?>
@@ -192,7 +192,7 @@ $result->close();
 
 /* Let's show the comments (or not)! */
 if (!$comments) {
-    echo '<p class="orange">No comment post yet. Be the first!</p>';
+    echo '<p class="orange">No comment post yet. Be the first to do so!</p>';
 } else {
     /* Some paging stuff */
     $perPage = CONF_GB_CMTSPP;
@@ -200,14 +200,14 @@ if (!$comments) {
     $page = 1;
     if (isset($_GET['page'])) {
 	$page = (int)$_GET['page'];
-    
-        if (!$page < 1 
-	    OR $page > $pages 
+
+        if (!$page < 1
+	    OR $page > $pages
 	) {
 	    $page = 1;
 	}
-    } 
-    
+    }
+
     $beginning = $page * $perPage - $perPage;
 
     /* Let's get the mess from DB and show it */
@@ -235,7 +235,7 @@ if (!$comments) {
 	}
 	$paging = str_replace('<a href="?page='.$page.'">'.$page.'</a>', '<b><u><a href="?page='.$page.'">'.$page.'</a>', $paging);
 	$paging .= '<i>('.$comments.' comments in total)</i></p>';
-	
+
 	echo $paging;
     }
 }

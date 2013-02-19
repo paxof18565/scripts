@@ -13,11 +13,11 @@ echo <<<HTMLB
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <meta http-equiv="content-language" content="en" />
-    <title>Fake mailer / Mail bomber</title>
-    <meta name="description" content="Fake mailer / Mail bomber" />
-    <style type="text/css">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="content-language" content="en" />
+	<title>Fake mailer / Mail bomber</title>
+	<meta name="description" content="Fake mailer / Mail bomber" />
+	<style type="text/css">
 	td {
 	    background-color: lightskyblue;
 	    padding: 2px;
@@ -38,7 +38,7 @@ echo <<<HTMLB
 	.notsuccessful {
 	    color: red;
 	}
-    </style>
+	</style>
 </head>
 <body>
 
@@ -52,61 +52,61 @@ if (!isset($_REQUEST['sendit'])) {
 <fieldset><legend>Form</legend>
 <table>
 <tbody>
-    <tr>
-	<td><label for="recipient">Recipient: </label></td>
-	<td><input type="text" name="recipient" id="recipient" value="victim@server.gov" /></td>
-    </tr>
-    <tr>
-        <td><label for="sender">Sender: </label></td>
-        <td><input type="text" name="sender" id="sender" value="administrator@server.gov" /></td>
-    </tr>
-    <tr>
-        <td><label for="subject">Subject: </label></td>
-        <td><input type="text" name="subject" id="subject" value="We need your password" /></td>
-    </tr>
-    <tr>
-        <td><label for="attachment">Attachment: </label></td>
-        <td><input type="file" name="attachment" id="attachment" /></td>
-    </tr>
-    <tr>
-        <td><label for="xmailer">X-Mailer: </label></td>
-        <td><input type="text" name="xmailer" id="xmailer" value="Thunderbird 1.5.0.9 (X11/20061219)" /></td>
-    </tr>
-    <tr>
-        <td><label for="number">Number of messages: </label></td>
-        <td><input type="text" name="number" id="number" value="1" /></td>
-    </tr>
-    <tr>
-        <td>Encoding: </td>
-        <td>
-            <label for="encoding-utf-8">UTF-8</label>
-            <input type="radio" name="encoding" value="utf-8" id="encoding-utf-8" checked="checked" />
+	<tr>
+		<td><label for="recipient">Recipient: </label></td>
+		<td><input type="text" name="recipient" id="recipient" value="victim@server.gov" /></td>
+	</tr>
+	<tr>
+		<td><label for="sender">Sender: </label></td>
+		<td><input type="text" name="sender" id="sender" value="administrator@server.gov" /></td>
+	</tr>
+	<tr>
+		<td><label for="subject">Subject: </label></td>
+		<td><input type="text" name="subject" id="subject" value="We need your password" /></td>
+	</tr>
+	<tr>
+		<td><label for="attachment">Attachment: </label></td>
+		<td><input type="file" name="attachment" id="attachment" /></td>
+	</tr>
+	<tr>
+		<td><label for="xmailer">X-Mailer: </label></td>
+		<td><input type="text" name="xmailer" id="xmailer" value="Thunderbird 1.5.0.9 (X11/20061219)" /></td>
+	</tr>
+	<tr>
+		<td><label for="number">Number of messages: </label></td>
+		<td><input type="text" name="number" id="number" value="1" /></td>
+	</tr>
+	<tr>
+		<td>Encoding: </td>
+		<td>
+			<label for="encoding-utf-8">UTF-8</label>
+			<input type="radio" name="encoding" value="utf-8" id="encoding-utf-8" checked="checked" />
 
-            <label for="encoding-windows-1250">Windows 1250</label>
-            <input type="radio" name="encoding" value="windows-1250" id="encoding-windows-1250" />
+			<label for="encoding-windows-1250">Windows 1250</label>
+			<input type="radio" name="encoding" value="windows-1250" id="encoding-windows-1250" />
 
-            <label for="encoding-iso-8859-2">ISO-8859-2</label>
-            <input type="radio" name="encoding" value="iso-8859-2" id="encoding-iso-8859-2" />
-        </td>
-    </tr>
-    <tr>
-        <td>Type of the message:</td>
-        <td>
-            <label for="type-plain">text/plain</label>
-            <input type="radio" name="type" value="plain" id="type-plain" checked="checked" />
+			<label for="encoding-iso-8859-2">ISO-8859-2</label>
+			<input type="radio" name="encoding" value="iso-8859-2" id="encoding-iso-8859-2" />
+		</td>
+	</tr>
+	<tr>
+		<td>Type of the message:</td>
+		<td>
+			<label for="type-plain">text/plain</label>
+			<input type="radio" name="type" value="plain" id="type-plain" checked="checked" />
 
-            <label for="type-html">text/html</label>
-            <input type="radio" name="type" value="html" id="type-html" />
-        </td>
-    </tr>
-    <tr>
-        <td><label for="content">Content: </label></td>
-        <td><textarea name="content" id="content" cols="30" rows="10"></textarea></td>
-    </tr>
-    <tr>
-        <td><input type="hidden" name="sendit" value="yes" /></td>
-        <td><input type="submit" value="Send" /></td>
-    </tr>
+			<label for="type-html">text/html</label>
+			<input type="radio" name="type" value="html" id="type-html" />
+		</td>
+	</tr>
+	<tr>
+		<td><label for="content">Content: </label></td>
+		<td><textarea name="content" id="content" cols="30" rows="10"></textarea></td>
+	</tr>
+	<tr>
+		<td><input type="hidden" name="sendit" value="yes" /></td>
+		<td><input type="submit" value="Send" /></td>
+	</tr>
 </tbody>
 </table>
 </fieldset>
@@ -162,14 +162,14 @@ HTMLFORM;
 	}
 
 	/* Send it n-times */
-    for ($i=1; $i < $_REQUEST['number']+1; $i++) {
+	for ($i=1; $i < $_REQUEST['number']+1; $i++) {
 		$m = mail($_REQUEST['recipient'], $_REQUEST['subject'], '', $header);
 		if ($m) {
 			echo '<strong class="successful">E-Mail n. '.$i.' has been sent successfully.</strong><br />';
 		} else {
 			echo '<strong class="notsuccessful">E-Mail n. '.$i.' has NOT been sent successfully.</strong><br />';
 		}
-    }
+	}
 }
 
 echo '

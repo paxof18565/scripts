@@ -25,9 +25,9 @@ echo "===============\n";
 
 echo "User: ";
 $user = preg_replace(
-			"/[^A-Za-z0-9_]/",
-			'',
-			trim(fgets(STDIN))
+	"/[^A-Za-z0-9_]/",
+	'',
+	trim(fgets(STDIN))
 );
 
 if (!$user OR !is_dir('/home/'.$user)) {
@@ -57,17 +57,17 @@ $template = str_replace('website.tld', $website, $template);
 
 $filename = '/etc/apache2/sites-available/'.$user.'_'.$website;
 
-    if (!$handle = fopen($filename, 'w')) {
-         exit("Cannot open file ($filename)\n");
-    }
+if (!$handle = fopen($filename, 'w')) {
+	exit("Cannot open file ($filename)\n");
+}
 
-    if (fwrite($handle, $template) === FALSE) {
-        exit("Cannot write to file ($filename)\n");
-    }
+if (fwrite($handle, $template) === FALSE) {
+	exit("Cannot write to file ($filename)\n");
+}
 
-    echo "Success writing to file ($filename)\n";
+echo "Success writing to file ($filename)\n";
 
-    fclose($handle);
+fclose($handle);
 
 system('a2ensite '.$user.'_'.$website);
 system('/etc/init.d/apache2 reload');

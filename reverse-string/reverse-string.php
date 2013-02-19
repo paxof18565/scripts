@@ -10,10 +10,10 @@
     License: 		  GNU Affero General Public License
 ========================================================================
 -->
-    <meta http-equiv="content-language" content="en" />
-    <meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
-    <title>JS/PHP reverse-string</title>
-    <style type="text/css">
+	<meta http-equiv="content-language" content="en" />
+	<meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
+	<title>JS/PHP reverse-string</title>
+	<style type="text/css">
 		body {
 			background-color: #333333;
 		}
@@ -63,12 +63,12 @@
 </head>
 <body>
 
-    <h1>JS/PHP reverse-string</h1>
+	<h1>JS/PHP reverse-string</h1>
 
-    <form method="post" action="?">
-    <fieldset><legend>input</legend>
-    <table>
-    <tbody>
+	<form method="post" action="?">
+	<fieldset><legend>input</legend>
+	<table>
+	<tbody>
 		<tr>
 			<td><label for="reverse_text">Text: </label></td>
 			<td><textarea name="reverse_text" id="reverse_text" rows="10" cols="80"><?php if (isset($_POST['reverse_text'])) { echo $_POST['reverse_text']; } ?></textarea></td>
@@ -88,15 +88,15 @@
 				<?php echo '<input type="submit" value="reverse using PHP" />'; ?>
 			</td>
 		</tr>
-    </tbody>
-    </table>
-    </fieldset>
-    </form>
+	</tbody>
+	</table>
+	</fieldset>
+	</form>
 
-    <form>
-    <fieldset><legend>output</legend>
-    <table>
-    <tbody>
+	<form>
+	<fieldset><legend>output</legend>
+	<table>
+	<tbody>
 		<tr>
 			<td><label for="reverse_js">JS reverse: </label></td>
 			<td><textarea name="reverse_js" id="reverse_js" rows="10" cols="80" disabled="disabled"></textarea></td>
@@ -105,26 +105,26 @@
 //iconv_set_encoding("internal_encoding", "UTF-8");
 
 if (isset($_POST['reverse_text'])) {
-    echo '
+	echo '
 <tr>
 			<td><label for="reverse_php">PHP reverse: </label></td>
 			<td>
 				<textarea name="reverse_php" id="reverse_php" rows="10" cols="80" disabled="disabled">';
 
-    $text = $_POST['reverse_text'];
-    for ($i=strlen($text); $i>0; $i=$i-1) {
+	$text = $_POST['reverse_text'];
+	for ($i=strlen($text); $i>0; $i=$i-1) {
 		//echo iconv_substr($text, $i-1, 1);
 		echo substr($text, $i-1, 1);
-    }
+	}
 
-    echo '</textarea>
+	echo '</textarea>
 			</td>
 		</tr>';
 }
 ?>
-    </tbody>
-    </table>
-    </fieldset>
-    </form>
+	</tbody>
+	</table>
+	</fieldset>
+	</form>
 </body>
 </html>
