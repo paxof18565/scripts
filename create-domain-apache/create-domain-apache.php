@@ -1,7 +1,7 @@
 <?php
 /*
     Application:  	  create-domain-apache
-    Version:		  0.2
+    Version:		  0.2.1
     Author: 		  René Kliment <rene.kliment@gmail.com>
     Website: 		  https://github.com/renekliment/scripts
     License: 		  GNU Affero General Public License
@@ -35,7 +35,7 @@ if (!$user OR !is_dir('/home/'.$user)) {
 }
 
 echo "Website: ";
-$website = preg_replace("/[^A-Za-z0-9.]/",'',trim(fgets(STDIN)));
+$website = preg_replace("/[^A-Za-z0-9.-]/",'',trim(fgets(STDIN)));
 
 $username = $user.'_'.$website;
 $homedir = '/home/'.$username;
