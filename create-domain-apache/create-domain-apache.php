@@ -54,7 +54,7 @@ $homedir = '/home/'.$username;
 
 system('useradd -m '.$username, $status);
 if ($status != 0) {
-	exit("An error occured while adding website user ($status)");
+	exit("An error occured while adding website user ($status).\n");
 }
 
 system('chmod o-r-w-x '.$homedir);
