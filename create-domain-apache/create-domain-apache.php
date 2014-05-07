@@ -50,7 +50,7 @@ echo "Website: ";
 $website = preg_replace("/[^A-Za-z0-9.-]/",'',trim(fgets(STDIN)));
 
 system('ls -l /home | grep -e _'.$website.' -e '.$website, $status);
-if ($status != 0) {
+if ($status == 0) {
 	exit("It seems that a configuration for this domain already exists. If you think this is an error, please contact your system administrator.\n");
 }
 
