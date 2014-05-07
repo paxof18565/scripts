@@ -1,7 +1,8 @@
+#!/usr/bin/php5
 <?php
 /*
     Application:  	  create-domain-apache
-    Version:		  0.2.1
+    Version:		  0.3
     Author: 		  René Kliment <rene.kliment@gmail.com>
     Website: 		  https://github.com/renekliment/scripts
     License: 		  GNU Affero General Public License
@@ -20,15 +21,26 @@ if (!file_exists($template_file)) {
 	exit("Template file not found! Check that the template is in the same directory as this script and that you're running this script from the directory it is located in.\n");
 }
 
+$status = 0;
+
 echo "Create website:\n";
 echo "===============\n";
 
 echo "User: ";
-$user = preg_replace(
-	"/[^A-Za-z0-9_]/",
-	'',
-	trim(fgets(STDIN))
-);
+if ($argc == 3 
+	&& $argv[1] == '-u'
+) { 
+
+	$user = $argv[2];
+	echo $user;
+
+} else {
+	$user = preg_replace(
+		"/[^A-Za-z0-9_]/",
+		'',
+		trim(fgets(STDIN))
+	);
+}
 
 if (!$user OR !is_dir('/home/'.$user)) {
 	exit("Invalid user or user with no home directory!\n");
@@ -40,7 +52,11 @@ $website = preg_replace("/[^A-Za-z0-9.-]/",'',trim(fgets(STDIN)));
 $username = $user.'_'.$website;
 $homedir = '/home/'.$username;
 
-system('useradd -m '.$username);
+system('useradd -m '.$username, $status);
+if ($status != 0) {
+	exit("An error occured while adding website user ($status)");
+}
+
 system('chmod o-r-w-x '.$homedir);
 mkdir($homedir.'/websites/'.$website.'/www/', 0770, TRUE);
 system('chown '.$username.' '.$homedir.'/websites/ -R');
