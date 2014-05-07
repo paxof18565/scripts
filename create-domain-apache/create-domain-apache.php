@@ -32,7 +32,7 @@ if ($argc == 3
 ) { 
 
 	$user = $argv[2];
-	echo $user;
+	echo $user."\n";
 
 } else {
 	$user = preg_replace(
