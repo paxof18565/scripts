@@ -2,10 +2,10 @@
 <?php
 /*
 	Application:	hosting-management
-    Version:		1.0
-    Author:			René Kliment <rene@renekliment.cz>
-    Website:		https://github.com/renekliment/scripts
-    License:		DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+	Version:		1.0
+	Author:			René Kliment <rene@renekliment.cz>
+	Website:		https://github.com/renekliment/scripts
+	License:		DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
 */
 
 

@@ -15,8 +15,8 @@ if (php_sapi_name() != 'cli') {
 
 $status = 0;
 
-echo "WIPING website:\n";
-echo "===============\n";
+echo "(de)activating website:\n";
+echo "=======================\n";
 
 echo "Owner: ";
 if ($argc == 3 
@@ -53,22 +53,25 @@ if ($status != 0 || !file_exists($home)) {
 	exit("It seems that this domain is not registered in our databse. If you think this is an error, please contact your system administrator.\n");
 }
 
-echo "You are about to WIPE domain ". strtoupper($domain) .' belonging to '. $owner . ' ... ARE YOU SURE? CTRL+C to abort, enter to continue';
-fgets(STDIN);
+echo "Action (ac = activate, de = deactivate): ";
+$action = trim(fgets(STDIN));
+if ($action == 'ac') {
 
-system('a2dissite '.$user);
-system('/etc/init.d/apache2 reload');
+	system('a2ensite '.$user);
+	system('mv /etc/php5/fpm/pool.d/'.$user.'.conf.de /etc/php5/fpm/pool.d/'.$user.'.conf');
+	system('mv '.$home.'/.ssh/authorized_keys.de '.$home.'/.ssh/authorized_keys');
+	
+} elseif ($action == 'de') {
 
-echo unlink('/etc/php5/fpm/pool.d/'.$user.'.conf') ? "PHP pool configuration deleted successfully.\n" : "Error occured when deleting PHP pool configuration!\n";
-echo unlink('/etc/apache2/sites-available/'.$user) ? "Apache domain configuration deleted successfully.\n" : "Error occured when deleting Apache domain configuration!\n";
-
-system("/etc/init.d/php5-fpm reload");
-
-system("gpasswd -d www-data ". $user);
-
-system('userdel -r -f '.$user, $status);
-if ($status != 0) {
-	exit("An error occured while removing website user ($status).\n");
+	system('a2dissite '.$user);
+	system('mv /etc/php5/fpm/pool.d/'.$user.'.conf /etc/php5/fpm/pool.d/'.$user.'.conf.de');
+	system('mv '.$home.'/.ssh/authorized_keys '.$home.'/.ssh/authorized_keys.de');
+	
+} else {
+	exit("You entered rubbish!\n");
 }
+
+system('/etc/init.d/apache2 reload');
+system("/etc/init.d/php5-fpm reload");
 
 echo "\n";
