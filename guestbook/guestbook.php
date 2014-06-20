@@ -1,11 +1,10 @@
 <?php
 /*
-    Application:  	  Simple single-file guestbook using MySQL
-    Version:		  0.2
-    Author: 		  René Kliment <rene.kliment@gmail.com>
-    Website: 		  https://github.com/renekliment/scripts
-    License: 		  GNU Affero General Public License
-========================================================================
+    Application:	Simple single-file guestbook using MySQL
+    Version:		1.0
+    Author:			René Kliment <rene@renekliment.cz>
+    Website:		https://github.com/renekliment/scripts
+    License:		DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
 */
 
 /* Session start */

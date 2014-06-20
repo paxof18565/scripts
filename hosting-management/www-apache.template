@@ -1,0 +1,13 @@
+<VirtualHost *:80>
+        ServerName {domain}
+        ServerAlias *.{domain}
+
+        VirtualDocumentRoot /home/{user}/websites/{domain}/%-3/
+
+        ErrorLog /home/{user}/websites/{domain}/error.log
+        LogLevel warn
+        CustomLog /home/{user}/websites/{domain}/access.log combined
+
+        Alias /fcgi-bin/php5-fpm /fcgi-bin-php5-fpm-{user}
+        FastCgiExternalServer /fcgi-bin-php5-fpm-{user} -socket /var/run/php5-fpm-{user}.sock -pass-header Authorization
+</VirtualHost>

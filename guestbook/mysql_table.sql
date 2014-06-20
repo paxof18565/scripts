@@ -11,4 +11,4 @@ CREATE TABLE IF NOT EXISTS `guestbook` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
 
 INSERT INTO `guestbook` (`id`, `timestamp`, `content`, `name`, `e-mail`, `ip`) VALUES
-(1, 0, 'Welcome and thank you for using my Guestbook! I hope, it will be useful for you ...', 'Rene Kliment', 'rene.kliment@gmail.com', '127.0.0.1/localhost');
+(1, 0, 'Welcome and thank you for using my Guestbook! I hope, it will be useful for you ...', 'Rene Kliment', 'rene@renekliment.cz', '127.0.0.1/localhost');
