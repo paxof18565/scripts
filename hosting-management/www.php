@@ -2,7 +2,7 @@
 <?php
 /*
 	Application:	hosting-management
-	Version:		2.0
+	Version:		2.1
 	Author:			René Kliment <rene@renekliment.cz>
 	Website:		https://github.com/renekliment/scripts
 	License:		DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
@@ -13,13 +13,13 @@ $template_file['apache'] = './www-apache.template';
 
 // Check we're running this in CLI mode
 if (php_sapi_name() != 'cli') {
-	exit("Not running in CLI mode!\n");
+	exit("### Not running in CLI mode!\n");
 }
 
 // Check for template files
 foreach ($template_file as $file) {
 	if (!file_exists($file)) {
-		exit("Template file '". $file ."' not found! Check that the template is in the same directory as this script and that you're running this script from the directory it is located in.\n");
+		exit("### Template file '". $file ."' not found! Check that the template is in the same directory as this script and that you're running this script from the directory it is located in.\n");
 	}
 }
 
@@ -76,18 +76,25 @@ function domain_exists($domain)
 	return false;
 }
 
+$parray = array(
+	'-o'	=> 'owner',
+	'-d'	=> 'domain',
+	'-a'	=> 'action',
+);
+
 // Parse command line parameters
 for ($i=1; $i < $argc; $i++) {
 	
 	if ($argv[$i] == '-h') {
+	
 		print_help();
 		exit(0);
-	} elseif ($argv[$i] == '-o' && $i != $argc-1) {
-		$clp['owner'] = trim($argv[$i+1]);
-	} elseif ($argv[$i] == '-d' && $i != $argc-1) {
-		$clp['domain'] = trim($argv[$i+1]);
-	} elseif ($argv[$i] == '-a' && $i != $argc-1) {
-		$clp['action'] = trim($argv[$i+1]);
+	
+	} elseif ( $i != $argc-1 && in_array($argv[$i], array_keys($parray)) ) {
+	
+		$clp[ $parray[$argv[$i]] ] = trim($argv[$i+1]);
+		$i++;
+
 	}
 	
 }
@@ -98,28 +105,16 @@ echo "Website management:\n";
 echo "===================\n";
 
 // Set owner
-$owner = '';
-
+echo "Owner: ";
 if (!empty($clp['owner'])) { 
-
 	$owner = plain_parse($clp['owner']);
-	if (!user_exists($owner)) {
-		$owner = '';
-		echo "Given owner username does not seem to exist. Please enter a valid username of the owner.\n";
-	} else {
-		echo "Owner: ";
-		echo $owner."\n";
-	}
+	echo $owner."\n";
+} else {
+	$owner = plain_parse(fgets(STDIN));
 }
 
-if (empty($owner)) {
-
-	echo "Owner: ";
-	$owner = plain_parse(fgets(STDIN));
-	if (!user_exists($owner)) {
-		exit("Invalid user or user with no home directory!\n");
-	}
-	
+if (!user_exists($owner)) {
+	exit("### Invalid user or user with no home directory!\n");
 }
 
 // Set domain
@@ -132,12 +127,18 @@ if (!empty($clp['domain'])) {
 }
 
 if (domain_exists($domain)) {
-	echo "Domain is in the system. Available actions are: wipe, ac, de\n";
+	echo "### Domain is in the system.";
 	$allowed_actions = array('wipe', 'ac', 'de');
 } else {
-	echo "Domain does not seem to exist in the system. Available actions are: add\n";
+	echo "### Domain does not seem to exist in the system.";
 	$allowed_actions = array('add');
 }
+
+echo " Available actions are: ";
+foreach ($allowed_actions as $action) {
+	echo $action . ' ';
+}
+echo "\n";
 
 // Set action
 echo "Action: ";
@@ -149,7 +150,7 @@ if (!empty($clp['action'])) {
 }
 
 if (!in_array($action, $allowed_actions)) {
-	exit("Action not valid.\n");
+	exit("### Action not valid.\n");
 }
 
 $user = $owner.'_'.$domain;
@@ -159,7 +160,7 @@ if ($action == 'add') {
 
 	system('useradd -m '.$user, $status);
 	if ($status != 0) {
-		exit("An error occured while adding website user ($status).\n");
+		exit("### An error occured while adding website user ($status).\n");
 	}
 
 	system('chmod o-r-w-x '.$home);
@@ -180,14 +181,14 @@ if ($action == 'add') {
 	$filename = '/etc/apache2/sites-available/'.$user;
 
 	if (!$handle = fopen($filename, 'w')) {
-		exit("Cannot open file ($filename)\n");
+		exit("### Cannot open file ($filename)\n");
 	}
 
 	if (fwrite($handle, $template) === FALSE) {
-		exit("Cannot write to file ($filename)\n");
+		exit("### Cannot write to file ($filename)\n");
 	}
 
-	echo "Success writing to file ($filename)\n";
+	echo "### Success writing to file ($filename)\n";
 	fclose($handle);
 
 	// PHP pool configuration
@@ -198,14 +199,14 @@ if ($action == 'add') {
 	$filename = '/etc/php5/fpm/pool.d/'.$user.'.conf';
 
 	if (!$handle = fopen($filename, 'w')) {
-			exit("Cannot open file ($filename)\n");
+			exit("### Cannot open file ($filename)\n");
 	}
 
 	if (fwrite($handle, $template) === FALSE) {
-			exit("Cannot write to file ($filename)\n");
+			exit("### Cannot write to file ($filename)\n");
 	}
 
-	echo "Success writing to file ($filename)\n";
+	echo "### Success writing to file ($filename)\n";
 	fclose($handle);
 
 	system("gpasswd -a www-data ". $user);
@@ -214,16 +215,17 @@ if ($action == 'add') {
 
 	system('a2ensite '.$user);
 	system('/etc/init.d/apache2 reload');
+	
 } elseif ($action == 'wipe') {
 
-	echo "You are about to WIPE domain ". strtoupper($domain) .' belonging to '. $owner . ' ... ARE YOU SURE? CTRL+C to abort, enter to continue';
+	echo "### You are about to WIPE domain ". strtoupper($domain) .' belonging to '. $owner . ' ... ARE YOU SURE? CTRL+C to abort, enter to continue';
 	fgets(STDIN);
 
 	system('a2dissite '.$user);
 	system('/etc/init.d/apache2 reload');
 
-	echo unlink('/etc/php5/fpm/pool.d/'.$user.'.conf') ? "PHP pool configuration deleted successfully.\n" : "Error occured when deleting PHP pool configuration!\n";
-	echo unlink('/etc/apache2/sites-available/'.$user) ? "Apache domain configuration deleted successfully.\n" : "Error occured when deleting Apache domain configuration!\n";
+	echo unlink('/etc/php5/fpm/pool.d/'.$user.'.conf') ? "### PHP pool configuration deleted successfully.\n" : "### Error occured when deleting PHP pool configuration!\n";
+	echo unlink('/etc/apache2/sites-available/'.$user) ? "### Apache domain configuration deleted successfully.\n" : "### Error occured when deleting Apache domain configuration!\n";
 
 	system("/etc/init.d/php5-fpm reload");
 
@@ -231,7 +233,7 @@ if ($action == 'add') {
 
 	system('userdel -r -f '.$user, $status);
 	if ($status != 0) {
-		exit("An error occured while removing website user ($status).\n");
+		exit("### An error occured while removing website user ($status).\n");
 	}
 
 } elseif ($action == 'ac') {
