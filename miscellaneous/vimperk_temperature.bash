@@ -1,15 +1,21 @@
 #!/bin/bash
 
-temp[1]=`curl -s http://www.skivodnik.cz/index.php?page=teplomer | grep "<p id = \"aktuálniTeplota\">"`
-temp[1]=${temp[1]#*>}
-temp[1]=${temp[1]%°*}
-temp[1]=`echo ${temp[1]} | tr -d ' '`
+function temp1 {
+	temp=`curl -s http://www.skivodnik.cz/index.php?page=teplomer | grep "<p id = \"aktuálniTeplota\">"`
+	temp=${temp#*>}
+	temp=${temp%°*}
+	temp=`echo ${temp} | tr -d ' '`
+	echo $temp
+}
 
-temp[2]=`curl -s http://db1.isenzor.cz/export/B827EBC108EE/text/`
+function temp2 {
+	temp=`curl -s http://db1.isenzor.cz/export/B827EBC108EE/text/`
+	echo $temp
+}
 
 if [ -n "$1" ]; then
-	echo ${temp[$1]}
+	temp${1}
 else
-	echo "skivodnik.cz:         ${temp[1]} °C"
-	echo "restaurace-vodnik.cz: ${temp[2]} °C"
+	echo "skivodnik.cz:         $(temp1) °C"
+	echo "restaurace-vodnik.cz: $(temp2) °C"
 fi
