@@ -6,8 +6,8 @@ import urllib2
 import re
 import os.path
 
-url = 'http://www.mesto.vimperk.cz/audio/rozhlas/'
 downloadDirectory = '/tmp/'
+url = 'http://www.mesto.vimperk.cz/audio/rozhlas/'
 
 req = urllib2.Request(url)
 response = urllib2.urlopen(req)
