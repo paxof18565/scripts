@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function temp1 {
+function tempSkiVodnik {
 	temp=`curl -s http://www.skivodnik.cz/index.php?page=teplomer | grep "<p id = \"aktuálniTeplota\">"`
 	temp=${temp#*>}
 	temp=${temp%°*}
@@ -8,14 +8,13 @@ function temp1 {
 	echo $temp
 }
 
-function temp2 {
-	temp=`curl -s http://db1.isenzor.cz/export/B827EBC108EE/text/`
-	echo $temp
+function tempRestauraceVodnik {
+	echo `curl -s http://db1.isenzor.cz/export/B827EBC108EE/text/`
 }
 
 if [ -n "$1" ]; then
 	temp${1}
 else
-	echo "skivodnik.cz:         $(temp1) °C"
-	echo "restaurace-vodnik.cz: $(temp2) °C"
+	echo "skivodnik.cz:         $(tempSkiVodnik) °C"
+	echo "restaurace-vodnik.cz: $(tempRestauraceVodnik) °C"
 fi
