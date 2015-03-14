@@ -6,10 +6,9 @@ listen = /var/run/php5-fpm-{user}.sock
 listen.owner = {user}
 listen.group = {user}
  
-pm = dynamic
-pm.max_children = 5 
-pm.start_servers = 2 
-pm.min_spare_servers = 1 
-pm.max_spare_servers = 3 
- 
+pm = ondemand
+pm.max_children = 8
+pm.process_idle_timeout = 300
+pm.max_requests = 10000
+
 chdir = /
