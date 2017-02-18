@@ -1,0 +1,4 @@
+elsat_statistics:
+  host: "http://statistika.vimperk.elsat.cz/"
+  username: "1234"
+  password: "abc"
